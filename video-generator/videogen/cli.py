@@ -28,13 +28,19 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="videogen",
         description="Autonomous video generator on the RunComfy Model API: "
-        "plans scenes with Claude, generates a clip per scene, stitches with ffmpeg.",
+        "plans scenes with an LLM (DeepSeek/MiniMax/Claude), generates a clip "
+        "per scene, stitches with ffmpeg.",
     )
     p.add_argument("topic", nargs="?", help="Topic for the video (omit with --auto-topic or --plan-file)")
     p.add_argument("--auto-topic", action="store_true", help="Let Claude invent the topic")
     p.add_argument("--plan-file", help="JSON plan file; skips the Claude planning step")
     p.add_argument("--scenes", type=int, default=config.DEFAULT_SCENES, help="Number of scenes (default %(default)s)")
     p.add_argument("--duration", type=int, default=config.DEFAULT_CLIP_SECONDS, help="Target seconds per clip (default %(default)s)")
+    p.add_argument("--planner", default=planner.DEFAULT_PLANNER,
+                   choices=sorted(planner.PLANNER_PROVIDERS) + ["claude"],
+                   help="LLM used for story/scene planning (default %(default)s)")
+    p.add_argument("--planner-model", default=None,
+                   help="Override the planner's model id (e.g. deepseek-reasoner, MiniMax-M2)")
     p.add_argument("--model", default=config.DEFAULT_MODEL,
                    help=f"Registry name ({', '.join(sorted(config.MODEL_REGISTRY))}) or raw vendor/model/endpoint route")
     p.add_argument("--param", action="append", default=[], metavar="KEY=VALUE",
@@ -87,9 +93,10 @@ def main(argv: list[str] | None = None) -> int:
         else:
             if not args.topic and not args.auto_topic:
                 raise SystemExit("Provide a topic, or use --auto-topic / --plan-file. See --help.")
-            if not os.environ.get("ANTHROPIC_API_KEY"):
-                log.warning("ANTHROPIC_API_KEY not set; relying on other Anthropic credentials")
-            plan = planner.generate_plan(args.topic, args.scenes, args.duration)
+            plan = planner.generate_plan(
+                args.topic, args.scenes, args.duration,
+                provider_name=args.planner, model=args.planner_model,
+            )
 
         if args.dry_run:
             client = runcomfy.MockRunComfyClient()

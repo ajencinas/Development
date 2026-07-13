@@ -2,8 +2,9 @@
 
 One command in, finished video out. The pipeline:
 
-1. **Plan** — Claude turns your topic into a title and per-scene cinematic
-   text-to-video prompts (or you supply a plan file and skip the LLM).
+1. **Plan** — an LLM (DeepSeek by default, MiniMax or Claude selectable) turns
+   your topic into a title and per-scene cinematic text-to-video prompts (or
+   you supply a plan file and skip the LLM).
 2. **Generate** — each scene is submitted to a video model on the
    [RunComfy Model API](https://www.runcomfy.com/models) (`model-api.runcomfy.net`),
    polled with backoff, and downloaded. Scenes run concurrently with retries.
@@ -27,8 +28,9 @@ cp .env.example .env   # then fill in your tokens
 
 - `RUNCOMFY_API_TOKEN` — from your RunComfy profile page (click your avatar,
   upper right, at runcomfy.com).
-- `ANTHROPIC_API_KEY` — for the Claude planning step. Optional if you always
-  use `--plan-file`.
+- `DEEPSEEK_API_KEY` — for the default DeepSeek planning step
+  (platform.deepseek.com). Or set `MINIMAX_API_KEY` and run with
+  `--planner minimax`. None needed if you always use `--plan-file`.
 
 ## Usage
 
@@ -41,6 +43,10 @@ python -m videogen --auto-topic
 
 # Skip the LLM: bring your own plan
 python -m videogen --plan-file my-plan.json
+
+# Plan with MiniMax instead of DeepSeek (or override the model id)
+python -m videogen "city at dawn" --planner minimax
+python -m videogen "city at dawn" --planner deepseek --planner-model deepseek-reasoner
 
 # Pick a model, scene count, and pass model-specific params
 python -m videogen "retro arcade" --model seedance-lite --scenes 6 --param aspect_ratio=16:9
@@ -101,6 +107,12 @@ Spend guards:
 pytest            # unit tests + a dry-run end-to-end test (needs ffmpeg)
 ```
 
-Layout: `videogen/config.py` (registry, defaults) · `planner.py` (Claude scene
-planning) · `runcomfy.py` (Model API client + dry-run mock) · `pipeline.py`
-(orchestration, manifest, resume) · `assembler.py` (ffmpeg) · `cli.py`.
+Layout: `videogen/config.py` (registry, defaults) · `planner.py` (LLM scene
+planning: DeepSeek/MiniMax/Claude) · `runcomfy.py` (Model API client + dry-run
+mock) · `pipeline.py` (orchestration, manifest, resume) · `assembler.py`
+(ffmpeg) · `cli.py`.
+
+Planner endpoints are OpenAI-compatible chat completions:
+DeepSeek `api.deepseek.com` (`deepseek-chat`, JSON mode) and MiniMax
+`api.minimax.io` (`MiniMax-M2`). If a provider changes its endpoint or model
+naming, adjust `PLANNER_PROVIDERS` in `videogen/planner.py`.
