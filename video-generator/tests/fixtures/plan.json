@@ -1,0 +1,7 @@
+{
+  "title": "Test video",
+  "scenes": [
+    {"prompt": "A red cube rotating on a white background, studio lighting, macro lens", "duration": 2},
+    {"prompt": "A blue sphere bouncing on a white background, studio lighting, macro lens", "duration": 2}
+  ]
+}
