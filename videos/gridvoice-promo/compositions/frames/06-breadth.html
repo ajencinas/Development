@@ -1,5 +1,5 @@
 <template>
-  <div id="root" data-composition-id="06-breadth">
+  <div id="root" data-composition-id="06-breadth" data-width="1920" data-height="1080" data-start="0" data-duration="7.675">
     <style>
       @font-face {
         font-family: "Barlow";
@@ -84,16 +84,16 @@
         padding-bottom: 0.9cqw;
         border-bottom: 1px solid #282726;
         font-size: 0.72cqw;
-        color: #504e48;
+        color: #8B897F;
       }
       #gv06-chrome .gv06-chrome-label {
-        color: #504e48;
+        color: #8B897F;
       }
 
       #gv06-kicker {
         position: absolute;
         left: 5.5cqw;
-        top: 6.6cqw;
+        top: 5.2cqw;
         font-size: 0.72cqw;
         color: #ffb300;
       }
@@ -123,7 +123,7 @@
       }
       #gv06-clock-label {
         font-size: 0.72cqw;
-        color: #504e48;
+        color: #8B897F;
       }
       #gv06-clock {
         margin-top: 0.55cqw;
@@ -178,7 +178,7 @@
       }
       .gv06-tag {
         font-size: 0.72cqw;
-        color: #504e48;
+        color: #8B897F;
       }
       .gv06-payload {
         margin-top: 1cqw;
@@ -206,15 +206,15 @@
       }
     </style>
 
-    <div class="clip" id="gv06-bg" data-start="0" data-duration="7.275" data-track-index="0">
+    <div class="clip" id="gv06-bg" data-start="0" data-duration="7.675" data-track-index="0">
       <div id="gv06-dawn"></div>
     </div>
 
-    <div class="clip" id="gv06-ghost" data-start="0" data-duration="7.275" data-track-index="1">
+    <div class="clip" id="gv06-ghost" data-start="0" data-duration="7.675" data-track-index="1">
       <div id="gv06-ghost-word">am</div>
     </div>
 
-    <div class="clip" id="gv06-content" data-start="0" data-duration="7.275" data-track-index="2">
+    <div class="clip" id="gv06-content" data-start="0" data-duration="7.675" data-track-index="2">
       <div id="gv06-cam">
         <div id="gv06-chrome" class="gv06-mono">
           <span class="gv06-chrome-label">around the clock</span>
@@ -274,7 +274,7 @@
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="assets/vendor/gsap.min.js"></script>
     <script>
       (function () {
         var DUR = 7.275;

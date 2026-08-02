@@ -1,6 +1,6 @@
 ---
 format: 1920x1080
-duration: 60s
+duration: 47s
 message: "Every customer call answered in seconds — 24/7, at any scale"
 arc: Hook → Pain → Product intro → Proof (the call) → Scale → Breadth → CTA
 audience: utility executives and customer-experience leaders
@@ -21,7 +21,7 @@ music: calm confident minimal electronic underscore, dark storm atmosphere resol
 - voiceover: "Two fourteen A-M. A storm just took the power out on Maple Street."
 - duration: 4.203s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/01-hook.html
 - type: hook
 - persuasion: Future pacing into the viewer's worst night — pain validation by scene-setting
@@ -45,7 +45,7 @@ keyMessage: This is the worst night of the year, and it starts now.
 - voiceover: "Six thousand customers reach for the phone. And the phone says — your estimated wait time is… forty-seven minutes."
 - duration: 6.869s
 - transition_in: crossfade
-- status: outline
+- status: animated
 - src: compositions/frames/02-pain.html
 - type: pain_point
 - persuasion: Pain agitation — the institutional non-answer dramatized as a number that keeps climbing
@@ -93,7 +93,7 @@ keyMessage: GridVoice answers instantly — that is the whole promise.
 - voiceover: "It confirms the outage against the live grid map. Files the report. Gives a real restoration time. Done — in under a minute."
 - duration: 8s
 - transition_in: crossfade
-- status: outline
+- status: animated
 - src: compositions/frames/04-call.html
 - type: feature_showcase
 - persuasion: Show-don't-tell proof — the machine visibly does the work of the call
@@ -117,7 +117,7 @@ keyMessage: This is not a phone menu; it resolves the call end to end.
 - voiceover: "Two sixteen A-M: four thousand eight hundred more calls. Every one answered in seconds. Zero hold time."
 - duration: 6.656s
 - transition_in: crossfade
-- status: outline
+- status: animated
 - src: compositions/frames/05-scale.html
 - type: benefit_highlight
 - persuasion: Statistical proof — storm-scale capacity said as one exploding number
@@ -141,7 +141,7 @@ keyMessage: It holds up exactly when call volume goes vertical.
 - voiceover: "By morning: restoration updates, billing questions, service appointments — and a warm handoff to your team when it matters."
 - duration: 7.275s
 - transition_in: push-slide LEFT
-- status: outline
+- status: animated
 - src: compositions/frames/06-breadth.html
 - type: benefit_highlight
 - persuasion: Feature-to-benefit translation — breadth shown as one accumulating morning

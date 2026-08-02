@@ -1,0 +1,427 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Barlow";
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(assets/fonts/Barlow-400.woff2) format("woff2");
+    }
+    @font-face {
+      font-family: "Barlow";
+      font-style: normal;
+      font-weight: 700;
+      font-display: block;
+      src: url(assets/fonts/Barlow-700.woff2) format("woff2");
+    }
+    @font-face {
+      font-family: "Barlow";
+      font-style: normal;
+      font-weight: 900;
+      font-display: block;
+      src: url(assets/fonts/Barlow-900.woff2) format("woff2");
+    }
+    @font-face {
+      font-family: "IBM Plex Mono";
+      font-style: normal;
+      font-weight: 500;
+      font-display: block;
+      src: url(assets/fonts/IBMPlexMono-500.woff2) format("woff2");
+    }
+
+    #root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Barlow", sans-serif;
+    }
+
+    /* full-bleed ground — dedicated clip layer, never on #root */
+    .f02-bg {
+      position: absolute;
+      inset: 0;
+      background: #0b1120;
+    }
+
+    .f02-stage {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* ——— Scene 1: call-volume cluster, dead center ——— */
+    .f02-cluster {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      top: 21cqh;
+      width: 62cqw;
+      text-align: center;
+      transform-origin: 50% 0%;
+    }
+    .f02-kicker {
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 500;
+      font-size: 0.9cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ffb300;
+    }
+    .f02-count-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      margin-top: 1.4cqw;
+    }
+    .f02-count {
+      display: inline-block;
+      width: 34cqw;
+      font-weight: 900;
+      font-size: 11cqw;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+      color: #f4f6fb;
+      transform-origin: center center;
+      text-align: center;
+    }
+    .f02-customers {
+      margin-top: 1.3cqw;
+      font-weight: 700;
+      font-size: 4.2cqw;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-transform: lowercase;
+      color: #f4f6fb;
+    }
+    .f02-phrase {
+      margin-top: 1.8cqw;
+      font-weight: 400;
+      font-size: 2.4cqw;
+      line-height: 1.4;
+      text-transform: lowercase;
+      color: rgba(244, 246, 251, 0.85);
+    }
+    .f02-word {
+      display: inline-block;
+      margin: 0 0.35cqw;
+    }
+
+    /* ——— Scene 2: institutional IVR panel ——— */
+    .f02-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      top: 40cqh;
+      width: 54cqw;
+      border: 1px solid #282726;
+      padding: 2.2cqw 2.4cqw;
+      transform-origin: 50% 50%;
+    }
+    .f02-panel-tag {
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 500;
+      font-size: 0.72cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8B897F;
+    }
+    .f02-terminal {
+      margin-top: 0.9cqw;
+      display: flex;
+      align-items: baseline;
+      white-space: pre;
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 500;
+      font-size: 2.1cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244, 246, 251, 0.82);
+    }
+    .f02-typed {
+      white-space: pre;
+    }
+    .f02-text-wrap {
+      display: inline-flex;
+      align-items: baseline;
+      min-width: 46cqw;
+      white-space: pre;
+    }
+    .f02-caret {
+      display: inline-block;
+      width: 0.9cqw;
+      height: 2.1cqw;
+      background: rgba(244, 246, 251, 0.55);
+      vertical-align: -0.28cqw;
+    }
+
+    /* ——— Scene 3: wait-time counter, left 60% ——— */
+    .f02-wait {
+      position: absolute;
+      left: 5.5cqw;
+      top: 52cqh;
+      width: 42cqw;
+      border-top: 1px solid #282726;
+      padding-top: 1cqw;
+    }
+    .f02-wait-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 500;
+      font-size: 1.1cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ffb300;
+    }
+    .f02-timer {
+      margin-top: 1cqw;
+      width: 40cqw;
+      font-weight: 900;
+      font-size: 12.5cqw;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+      color: #f4f6fb;
+      transform-origin: left center;
+    }
+  </style>
+
+  <div data-composition-id="02-pain" data-duration="7.269" data-width="1920" data-height="1080">
+    <div class="clip f02-bg" data-start="0" data-duration="7.269" data-track-index="0"></div>
+
+    <div class="clip f02-stage" data-start="0" data-duration="7.269" data-track-index="1">
+      <!-- Scene 1: 6,000 customers -->
+      <div class="f02-cluster" id="02-pain-cluster">
+        <div class="f02-kicker" id="02-pain-kicker">Storm event — call volume</div>
+        <div class="f02-count-wrap">
+          <span class="f02-count" id="02-pain-count">0</span>
+        </div>
+        <div class="f02-customers" id="02-pain-customers">customers</div>
+        <div class="f02-phrase" id="02-pain-phrase">
+          <span class="f02-word">reach</span><span class="f02-word">for</span><span
+            class="f02-word"
+            >the</span
+          ><span class="f02-word">phone</span>
+        </div>
+      </div>
+
+      <!-- Scene 2: the institutional voice -->
+      <div class="f02-panel" id="02-pain-panel">
+        <div class="f02-panel-tag">Automated system</div>
+        <div class="f02-terminal">
+          <span class="f02-text-wrap"
+            ><span class="f02-typed" id="02-pain-typed"></span
+            ><span class="f02-caret" id="02-pain-caret"></span
+          ></span>
+        </div>
+      </div>
+
+      <!-- Scene 3: the 47-minute answer -->
+      <div class="f02-wait" id="02-pain-wait">
+        <div class="f02-wait-label" id="02-pain-wait-label">Estimated wait</div>
+        <div class="f02-timer" id="02-pain-timer">00:00</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (() => {
+      const DUR = 6.869;
+
+      const el = (id) => document.getElementById(id);
+      const cluster = el("02-pain-cluster");
+      const kicker = el("02-pain-kicker");
+      const count = el("02-pain-count");
+      const customers = el("02-pain-customers");
+      const words = el("02-pain-phrase").querySelectorAll(".f02-word");
+      const panel = el("02-pain-panel");
+      const typed = el("02-pain-typed");
+      const caret = el("02-pain-caret");
+      const waitLabel = el("02-pain-wait-label");
+      const timer = el("02-pain-timer");
+
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["02-pain"] = tl;
+
+      /* ————— Scene 1 (0.0–1.9s): 6,000 customers reach for the phone ————— */
+
+      tl.fromTo(
+        kicker,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        0.05
+      );
+
+      // counting-dynamic-scale — value proxy + synchronized transform growth
+      const callState = { value: 0 };
+      tl.to(
+        callState,
+        {
+          value: 6000,
+          duration: 1.05,
+          ease: "power3.out",
+          onUpdate: () => {
+            count.textContent = Math.round(callState.value).toLocaleString("en-US");
+          },
+        },
+        0.1
+      );
+      tl.fromTo(
+        count,
+        { scale: 0.5, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.05, ease: "power3.out" },
+        0.1
+      );
+
+      // suffix lands AFTER the count completes — the number gets its own beat
+      tl.fromTo(
+        customers,
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.6)" },
+        1.15
+      );
+
+      // per-word staggered landing on the VO cue "reach for the phone"
+      tl.fromTo(
+        words,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.32, ease: "power3.out", stagger: 0.12 },
+        1.32
+      );
+
+      /* ————— Scene 2 (1.9–3.8s): scale-swap — counter demotes up, IVR line types on ————— */
+
+      // outgoing: fast power2.in shrink upward (demote, not exit)
+      tl.to(
+        cluster,
+        { scale: 0.32, y: -120, opacity: 0.55, duration: 0.45, ease: "power2.in" },
+        1.95
+      );
+
+      // incoming: pops in with weight, overlapping the exit tail
+      tl.fromTo(
+        panel,
+        { scale: 0.78, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(1.6)" },
+        2.25
+      );
+
+      /* discrete-text-sequence + context-sensitive-cursor —
+         the institutional non-answer types on, deadpan */
+      const CREAM_DIM = "rgba(244,246,251,0.55)";
+      const AMBER = "#ffb300";
+      const HINT = "#8B897F";
+      const SEQUENCE = [
+        { t: 0.0, text: "", color: CREAM_DIM },
+        { t: 2.55, text: "Y", color: CREAM_DIM },
+        { t: 2.63, text: "YO", color: CREAM_DIM },
+        { t: 2.7, text: "YOUR", color: CREAM_DIM },
+        { t: 2.8, text: "YOUR C", color: CREAM_DIM },
+        { t: 2.87, text: "YOUR CA", color: CREAM_DIM },
+        { t: 2.94, text: "YOUR CALL", color: CREAM_DIM },
+        { t: 3.08, text: "YOUR CALL IS", color: CREAM_DIM },
+        { t: 3.2, text: "YOUR CALL IS I", color: AMBER },
+        { t: 3.26, text: "YOUR CALL IS IMPO", color: AMBER },
+        { t: 3.32, text: "YOUR CALL IS IMPORT", color: AMBER },
+        { t: 3.38, text: "YOUR CALL IS IMPORTANT", color: AMBER },
+        { t: 3.52, text: "YOUR CALL IS IMPORTANT TO", color: CREAM_DIM },
+        { t: 3.62, text: "YOUR CALL IS IMPORTANT TO US", color: CREAM_DIM },
+        { t: 3.72, text: "YOUR CALL IS IMPORTANT TO US.", color: HINT },
+      ];
+      // baked typing events — pure of any mutable tracker (seek-safe)
+      const CHANGE_TIMES = SEQUENCE.filter(
+        (e, i) => i > 0 && e.text !== SEQUENCE[i - 1].text
+      ).map((e) => e.t);
+      const TYPING_GRACE = 0.16;
+      const BLINK_PERIOD = 0.7;
+      const FREEZE_AT = 3.9; // demoted panel holds a dead-still solid caret
+
+      function entryAt(time) {
+        for (let i = SEQUENCE.length - 1; i >= 0; i--) {
+          if (time >= SEQUENCE[i].t) return SEQUENCE[i];
+        }
+        return SEQUENCE[0];
+      }
+
+      const driver = { t: 0 };
+      tl.to(
+        driver,
+        {
+          t: DUR,
+          duration: DUR,
+          ease: "none",
+          onUpdate: () => {
+            const entry = entryAt(driver.t);
+            typed.textContent = entry.text;
+            caret.style.background = entry.color;
+            // caret opacity — pure function of driver time
+            if (driver.t >= FREEZE_AT) {
+              caret.style.opacity = "1";
+            } else {
+              const isTyping = CHANGE_TIMES.some(
+                (t) => t <= driver.t && driver.t - t < TYPING_GRACE
+              );
+              caret.style.opacity = isTyping
+                ? "1"
+                : Math.sin((driver.t * Math.PI * 2) / BLINK_PERIOD) > 0
+                  ? "1"
+                  : "0";
+            }
+          },
+        },
+        0
+      );
+
+      /* ————— Scene 3 (3.8–5.9s): the 47-minute answer, 60/40 asymmetric ————— */
+
+      // the institutional line demotes right to make room
+      tl.to(
+        panel,
+        { x: 470, scale: 0.72, opacity: 0.6, duration: 0.5, ease: "power2.inOut" },
+        3.9
+      );
+
+      // label arrives before the count peaks
+      tl.fromTo(
+        waitLabel,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+        4.0
+      );
+
+      // counting-dynamic-scale — 00:00 → 47:00, heat rising with the value
+      const waitState = { value: 0 };
+      const heat = gsap.utils.interpolate("#F4F6FB", "#FFB300");
+      tl.to(
+        waitState,
+        {
+          value: 2820, // 47:00 in seconds
+          duration: 1.7,
+          ease: "power2.out",
+          onUpdate: () => {
+            const v = Math.round(waitState.value);
+            const m = Math.floor(v / 60);
+            const s = v % 60;
+            timer.textContent =
+              String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+            timer.style.color = heat(Math.pow(v / 2820, 1.6));
+          },
+        },
+        4.15
+      );
+      tl.fromTo(
+        timer,
+        { scale: 0.55, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.7, ease: "power2.out" },
+        4.15
+      );
+
+      /* ————— Scene 4 (5.9–6.87s): hard stop on 47:00 — dead stillness ————— */
+      // no tweens past 5.85; the frame freezes on the number.
+    })();
+  </script>
+</template>
