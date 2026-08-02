@@ -1,0 +1,375 @@
+<template>
+  <style>
+    /* ── Fonts (frame.md: Barlow display/body + IBM Plex Mono chrome) ── */
+    @font-face {
+      font-family: "Barlow";
+      font-style: normal;
+      font-weight: 400;
+      src: url(https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2) format("woff2");
+    }
+    @font-face {
+      font-family: "Barlow";
+      font-style: normal;
+      font-weight: 600;
+      src: url(https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51os.woff2) format("woff2");
+    }
+    @font-face {
+      font-family: "Barlow";
+      font-style: normal;
+      font-weight: 900;
+      src: url(https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E3j-ws51os.woff2) format("woff2");
+    }
+    @font-face {
+      font-family: "IBM Plex Mono";
+      font-style: normal;
+      font-weight: 500;
+      src: url(https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgg.woff2) format("woff2");
+    }
+
+    /* ── Root (styled via #root per contract; ground painted by the bg clip, not here) ── */
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Barlow", sans-serif;
+    }
+
+    /* ── Depth layer 1 — grid ground (full-bleed clip) ── */
+    .gv3-bg {
+      position: absolute;
+      inset: 0;
+      background: #0b1120;
+      overflow: hidden;
+    }
+    .gv3-grid {
+      position: absolute;
+      inset: -70px;
+      background-image:
+        linear-gradient(to right, rgba(244, 246, 251, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(244, 246, 251, 0.032) 1px, transparent 1px);
+      background-size: 96px 96px;
+    }
+    .gv3-lift {
+      /* the calm — a slightly lifted navy wash that blooms in as the storm settles */
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse 130% 95% at 50% 44%,
+        rgba(26, 38, 68, 0.85) 0%,
+        rgba(16, 24, 46, 0.4) 55%,
+        rgba(11, 17, 32, 0) 82%
+      );
+      opacity: 0;
+    }
+
+    /* ── Depth layer 2 — amber glow behind the mark (ambient-glow-bloom) ── */
+    .gv3-glowlayer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    #gv3-glow {
+      position: absolute;
+      left: 400px;
+      top: 190px;
+      width: 1120px;
+      height: 680px;
+      background: radial-gradient(
+        closest-side,
+        rgba(255, 150, 0, 0.55) 0%,
+        rgba(255, 150, 0, 0.16) 46%,
+        rgba(255, 150, 0, 0) 72%
+      );
+      opacity: 0;
+    }
+
+    /* ── Depth layer 3 — type + waveform ── */
+    .gv3-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 14cqh; /* biases the column up into the top-83% content region */
+    }
+    #gv3-num {
+      position: absolute;
+      top: 5.5cqh;
+      left: 5.5cqw;
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 500;
+      font-size: 0.72cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #504e48;
+      opacity: 0;
+    }
+    #gv3-hero {
+      font-weight: 900;
+      color: #f4f6fb;
+      text-transform: lowercase;
+      text-align: center;
+      white-space: nowrap;
+      height: 13cqw; /* reserve the display box so the small→big hard cut never reflows */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #gv3-hero.gv3-small {
+      font-size: 8cqw;
+      letter-spacing: -0.03em;
+      line-height: 0.9;
+    }
+    #gv3-hero.gv3-big {
+      font-size: 13cqw;
+      letter-spacing: -0.04em;
+      line-height: 0.88;
+    }
+    .gv3-wave-wrap {
+      margin-top: 0.6cqw;
+      width: 34cqw;
+      height: 7.6cqw;
+    }
+    .gv3-wave-wrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .gv3-sub {
+      margin-top: 1.6cqw;
+      height: 2.6cqw; /* reserved — words fade in without reflow */
+      font-size: 1.9cqw;
+      font-weight: 400;
+      line-height: 1.3;
+      color: #f4f6fb;
+      text-transform: lowercase;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .gv3-w {
+      display: inline-block;
+      opacity: 0;
+      margin: 0 0.32cqw;
+      color: rgba(244, 246, 251, 0.78);
+    }
+    .gv3-w-em {
+      font-weight: 600;
+      color: #f4f6fb;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="03-intro"
+    data-width="1920"
+    data-height="1080"
+    data-duration="6.059"
+  >
+    <!-- track 0 — grid ground -->
+    <div class="clip gv3-bg" data-start="0" data-duration="6.059" data-track-index="0">
+      <div class="gv3-grid" id="gv3-grid"></div>
+      <div class="gv3-lift" id="gv3-lift"></div>
+    </div>
+
+    <!-- track 1 — amber glow -->
+    <div class="clip gv3-glowlayer" data-start="0" data-duration="6.059" data-track-index="1">
+      <div id="gv3-glow"></div>
+    </div>
+
+    <!-- track 2 — type + waveform -->
+    <div class="clip gv3-stage" data-start="0" data-duration="6.059" data-track-index="2">
+      <div id="gv3-num">no. 03 &nbsp;/&nbsp; meet the agent</div>
+      <div id="gv3-hero" class="gv3-small"></div>
+      <div class="gv3-wave-wrap">
+        <svg id="gv3-wave" viewBox="0 0 720 160" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="gv3-sub" id="gv3-sub"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var DUR = 6.059;
+      var tl = gsap.timeline({ paused: true });
+
+      /* ════════ Scene 1 (0.0–1.2s) — the storm grid settles; "introducing" hard-cuts in ════════ */
+
+      // Grid settle: the ground eases down from a slightly agitated zoom to rest — then stillness.
+      tl.fromTo("#gv3-grid", { scale: 1.05 }, { scale: 1, duration: 1.3, ease: "power2.out" }, 0);
+      // The calm lift — slightly lifted navy blooms in as the canvas calms.
+      tl.fromTo(
+        "#gv3-lift",
+        { opacity: 0 },
+        { opacity: 0.8, duration: 1.05, ease: "power1.inOut" },
+        0.15
+      );
+      // Catalogue chrome, quiet.
+      tl.fromTo(
+        "#gv3-num",
+        { opacity: 0, y: 8 },
+        { opacity: 0.65, y: 0, duration: 0.5, ease: "power1.out" },
+        0.5
+      );
+
+      // Macro move underneath: the type/waveform layer drifts forward across the whole shot.
+      tl.fromTo(".gv3-stage", { scale: 1 }, { scale: 1.028, duration: DUR, ease: "none" }, 0);
+
+      /* ── discrete-text-sequence: hard-cut name-drop, "introducing" → "gridvoice" ── */
+      var hero = document.getElementById("gv3-hero");
+      var SEQUENCE = [
+        { t: 0.0, text: "", big: false },
+        { t: 0.22, text: "introducing", big: false },
+        { t: 1.2, text: "gridvoice", big: true }
+      ];
+      function stateAt(time) {
+        for (var i = SEQUENCE.length - 1; i >= 0; i--) {
+          if (time >= SEQUENCE[i].t) return SEQUENCE[i];
+        }
+        return SEQUENCE[0];
+      }
+      var lastText = null;
+      var driver = { t: 0 };
+      tl.to(
+        driver,
+        {
+          t: DUR,
+          duration: DUR,
+          ease: "none",
+          onUpdate: function () {
+            var st = stateAt(driver.t);
+            if (st.text !== lastText) {
+              hero.textContent = st.text; // instant swap — no smear
+              hero.classList.toggle("gv3-big", st.big);
+              hero.classList.toggle("gv3-small", !st.big);
+              lastText = st.text;
+            }
+          }
+        },
+        0
+      );
+      // Micro impact settles on each cut (the cut itself stays instant).
+      tl.fromTo("#gv3-hero", { scale: 1.05 }, { scale: 1, duration: 0.3, ease: "power3.out" }, 0.22);
+      tl.fromTo("#gv3-hero", { scale: 1.06 }, { scale: 1, duration: 0.35, ease: "power3.out" }, 1.2);
+
+      /* ════════ Scene 2 (1.2–2.8s) — "gridvoice" full scale; the mark draws itself ════════ */
+
+      /* ── svg-path-draw: amber waveform bars trace in stroke-by-stroke, left → right ── */
+      var SVG_NS = "http://www.w3.org/2000/svg";
+      var svg = document.getElementById("gv3-wave");
+      var N = 25;
+      var bars = [];
+      var barX = [];
+      var i, u, env, mod, h, x, line;
+      for (i = 0; i < N; i++) {
+        u = i / (N - 1);
+        // Deterministic voice-shaped envelope: one broad lobe modulated by a faster ripple.
+        env = Math.sin(Math.PI * u);
+        mod = 0.45 + 0.55 * Math.pow(Math.sin(u * Math.PI * 5.2 + 0.7), 2);
+        h = 14 + 118 * Math.pow(env, 0.9) * mod;
+        x = 30 + (660 / (N - 1)) * i;
+        line = document.createElementNS(SVG_NS, "line");
+        line.setAttribute("x1", String(x));
+        line.setAttribute("y1", String(80 - h / 2));
+        line.setAttribute("x2", String(x));
+        line.setAttribute("y2", String(80 + h / 2));
+        line.setAttribute("stroke", "#FFB300");
+        line.setAttribute("stroke-width", "9");
+        line.setAttribute("stroke-linecap", "round");
+        line.setAttribute("fill", "none");
+        svg.appendChild(line);
+        // Measure, never guess (slight overestimate hides the invisible-start edge case).
+        var len;
+        try {
+          len = line.getTotalLength() * 1.05;
+        } catch (e) {
+          len = h * 1.05;
+        }
+        if (!len || len < h) len = h * 1.05;
+        line.style.strokeDasharray = String(len);
+        line.style.strokeDashoffset = String(len);
+        bars.push(line);
+        barX.push(x);
+        tl.to(
+          line,
+          { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" },
+          1.25 + i * 0.042
+        );
+      }
+
+      /* ── ambient-glow-bloom (depth layer 2): faint halo lands as ONE beat with the drawn mark ── */
+      tl.fromTo(
+        "#gv3-glow",
+        { opacity: 0, scale: 0.85 },
+        { opacity: 0.14, scale: 1, duration: 1.1, ease: "power2.out" },
+        1.35
+      );
+
+      /* ════════ Scene 3 (2.8–4.5s) — the name demotes; sub-line reveals per word ════════ */
+
+      tl.to("#gv3-hero", { scale: 0.84, y: 10, duration: 0.55, ease: "power2.inOut" }, 2.8);
+
+      /* ── dynamic-content-sequencing: per-word starts computed from content length ── */
+      var WORDS = ["the", "voice", "ai", "agent", "built", "for", "utilities"];
+      var sub = document.getElementById("gv3-sub");
+      var BASE_DURATION = 0.12;
+      var SEC_PER_CHAR = 0.0175;
+      var WORDS_START = 2.95;
+      var cumulative = 0;
+      for (i = 0; i < WORDS.length; i++) {
+        var w = document.createElement("span");
+        w.className = "gv3-w" + (WORDS[i] === "utilities" ? " gv3-w-em" : "");
+        w.textContent = WORDS[i];
+        sub.appendChild(w);
+        var wStart = WORDS_START + cumulative;
+        cumulative += BASE_DURATION + WORDS[i].length * SEC_PER_CHAR;
+        tl.fromTo(
+          w,
+          { autoAlpha: 0, y: 12 },
+          { autoAlpha: 1, y: 0, duration: 0.32, ease: "power2.out" },
+          wStart
+        );
+      }
+
+      /* ════════ Scene 4 (4.5–6.06s) — on "first ring": one finite swell + glow bloom ════════ */
+
+      /* ── svg-icon-enrichment: live SVG internals — a single center-out ripple through the bars.
+             Transform ATTRIBUTE with explicit center (bbox-local CSS origins would fly off-center). ── */
+      var pulse = { p: 0 };
+      var CENTER = (N - 1) / 2;
+      tl.to(
+        pulse,
+        {
+          p: 1,
+          duration: 0.95,
+          ease: "none",
+          onUpdate: function () {
+            for (var k = 0; k < N; k++) {
+              var dist = Math.abs(k - CENTER) / CENTER;
+              var local = pulse.p * 1.55 - dist * 0.55;
+              if (local < 0) local = 0;
+              if (local > 1) local = 1;
+              var s = 1 + Math.sin(Math.PI * local) * 0.55 * (1 - 0.55 * dist);
+              bars[k].setAttribute(
+                "transform",
+                "translate(" + barX[k] + " 80) scale(1 " + s + ") translate(" + -barX[k] + " -80)"
+              );
+            }
+          }
+        },
+        4.95
+      );
+      // Glow bloom rides the pulse — swells past peak, then eases to a steady hold (≤ 0.45 always).
+      tl.to("#gv3-glow", { opacity: 0.32, scale: 1.06, duration: 0.4, ease: "power2.out" }, 4.95);
+      tl.to("#gv3-glow", { opacity: 0.24, scale: 1.02, duration: 0.5, ease: "power2.inOut" }, 5.4);
+      // Then the frame holds — no exit; the root transition owns the cut.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-intro"] = tl;
+    })();
+  </script>
+</template>

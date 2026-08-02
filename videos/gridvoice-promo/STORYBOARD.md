@@ -69,7 +69,7 @@ keyMessage: On the night that matters most, the old way answers with a queue.
 - voiceover: "Introducing GridVoice — the voice A-I agent built for utilities. It answers on the first ring."
 - duration: 6.059s
 - transition_in: zoom-through
-- status: outline
+- status: animated
 - src: compositions/frames/03-intro.html
 - type: product_intro
 - persuasion: Negative contrast — instant answer against the 47-minute queue we just felt
