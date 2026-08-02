@@ -1,0 +1,427 @@
+<template>
+  <div id="root" data-composition-id="05-scale">
+    <style>
+      @font-face {
+        font-family: "Barlow";
+        font-style: normal;
+        font-weight: 700;
+        src: url(assets/fonts/Barlow-700.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "Barlow";
+        font-style: normal;
+        font-weight: 900;
+        src: url(assets/fonts/Barlow-900.woff2) format("woff2");
+      }
+      @font-face {
+        font-family: "IBM Plex Mono";
+        font-style: normal;
+        font-weight: 500;
+        src: url(assets/fonts/IBMPlexMono-500.woff2) format("woff2");
+      }
+
+      #root {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        container-type: size;
+      }
+
+      /* full-bleed ground — dark register */
+      .s05-bg {
+        position: absolute;
+        inset: 0;
+        background: #0b1120;
+      }
+
+      .s05-stagewrap {
+        position: absolute;
+        inset: 0;
+      }
+      .s05-stage {
+        position: absolute;
+        inset: 0;
+        transform-origin: 50% 44%;
+      }
+
+      /* mono timestamp — top third chrome */
+      .s05-ts {
+        position: absolute;
+        top: 8.5cqh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 500;
+        font-size: 1.7cqw;
+        letter-spacing: 0.14em;
+        color: #ffb300;
+        z-index: 5;
+      }
+
+      /* waveform tick field */
+      .s05-ticks {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+      .s05-tick {
+        position: absolute;
+        left: 50%;
+        top: 43.5cqh;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        width: max-content;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      .s05-bar {
+        width: 4px;
+        background: #ffb300;
+      }
+
+      /* ambient glow behind the counter */
+      .s05-glow {
+        position: absolute;
+        left: calc(50% - 36.5cqw);
+        top: 1.8cqh;
+        width: 73cqw;
+        height: 83.4cqh;
+        background: radial-gradient(
+          closest-side,
+          rgba(232, 116, 0, 0.55),
+          rgba(232, 116, 0, 0) 72%
+        );
+        opacity: 0;
+        z-index: 2;
+      }
+
+      /* mono kicker above the counter */
+      .s05-kicker {
+        position: absolute;
+        top: 19.9cqh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 500;
+        font-size: 1.05cqw;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(244, 246, 251, 0.62);
+        opacity: 0;
+        z-index: 4;
+      }
+
+      /* the exploding counter — the one display moment */
+      .s05-counterwrap {
+        position: absolute;
+        top: 25.7cqh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        line-height: 1;
+        opacity: 0;
+        z-index: 3;
+      }
+      .s05-counter {
+        display: inline-block;
+        transform-origin: center center;
+        font-family: "Barlow", sans-serif;
+        font-weight: 900;
+        font-size: 20cqw;
+        letter-spacing: -0.04em;
+        font-variant-numeric: tabular-nums;
+        color: #ffb300;
+      }
+
+      /* per-word payoff line */
+      .s05-line {
+        position: absolute;
+        top: 64.8cqh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-family: "Barlow", sans-serif;
+        font-weight: 700;
+        font-size: 3.2cqw;
+        letter-spacing: -0.02em;
+        text-transform: lowercase;
+        color: #f4f6fb;
+        z-index: 4;
+      }
+      .s05-w {
+        display: inline-block;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      .s05-line .s05-w + .s05-w {
+        margin-left: 0.28em;
+      }
+
+      /* ZERO HOLD TIME stamp — mono caps */
+      .s05-zht {
+        position: absolute;
+        top: 74.6cqh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 500;
+        font-size: 2.35cqw;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        opacity: 0;
+        z-index: 4;
+      }
+      .s05-kw {
+        display: inline-block;
+        transform-origin: 50% 50%;
+        color: rgb(80, 78, 72);
+        text-shadow: 0 0 0 rgba(255, 160, 0, 0);
+      }
+      .s05-zht .s05-kw + .s05-kw {
+        margin-left: 0.9em;
+      }
+    </style>
+
+    <div class="clip s05-bg" data-start="0" data-duration="6.656" data-track-index="0"></div>
+
+    <div class="clip s05-stagewrap" data-start="0" data-duration="6.656" data-track-index="1">
+      <div class="s05-stage" id="s05-stage">
+        <div class="s05-ts" id="s05-ts">2:<span id="s05-min">14</span> AM</div>
+
+        <div class="s05-ticks" id="s05-ticks"></div>
+
+        <div class="s05-glow" id="s05-glow"></div>
+
+        <div class="s05-kicker" id="s05-kicker">simultaneous calls</div>
+
+        <div class="s05-counterwrap" id="s05-counterwrap">
+          <span class="s05-counter" id="s05-counter">1</span>
+        </div>
+
+        <div class="s05-line" id="s05-line"
+          ><span class="s05-w">every</span><span class="s05-w">one</span><span class="s05-w">answered</span><span class="s05-w">in</span><span class="s05-w">seconds</span></div>
+
+        <div class="s05-zht" id="s05-zht"
+          ><span class="s05-kw" data-word="zero">zero</span><span class="s05-kw" data-word="hold">hold</span><span class="s05-kw" data-word="time">time</span></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (() => {
+        const D = 6.656;
+
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+        window.__timelines["05-scale"] = tl;
+
+        /* ── build the waveform-tick field (index-derived, deterministic) ── */
+        const field = document.getElementById("s05-ticks");
+        const N = 36;
+        const TICKS = [];
+        for (let i = 0; i < N; i++) {
+          const a = i * 2.399963; /* golden angle */
+          const rn = Math.sqrt((i + 0.5) / N);
+          const tx = Math.cos(a) * (260 + rn * 590);
+          const ty = Math.sin(a) * (150 + rn * 170);
+          /* depth from a golden-ratio fraction — far ticks smaller + dimmer */
+          const d = i === 0 ? 1 : 0.4 + 0.6 * ((i * 0.6180339887 + 0.37) % 1);
+          const el = document.createElement("div");
+          el.className = "s05-tick";
+          for (let j = 0; j < 5; j++) {
+            const bar = document.createElement("div");
+            bar.className = "s05-bar";
+            const h = 10 + 16 * (0.5 + 0.5 * Math.sin(i * 1.7 + j * 1.9 + 0.8));
+            bar.style.height = h.toFixed(1) + "px";
+            el.appendChild(bar);
+          }
+          field.appendChild(el);
+          TICKS.push({ el, tx, ty, d });
+        }
+
+        /* ── Scene 2: counter 1 → 4,800 (counting-dynamic-scale) ── */
+        const BURST_START = 1.3;
+        const BURST_DUR = 2.0;
+        const COUNT_EASE = "power3.out";
+        const easeFn = gsap.parseEase(COUNT_EASE);
+
+        const counterEl = document.getElementById("s05-counter");
+        const state = { value: 1 };
+        tl.to(
+          state,
+          {
+            value: 4800,
+            duration: BURST_DUR,
+            ease: COUNT_EASE,
+            onUpdate: () => {
+              counterEl.textContent = Math.round(state.value).toLocaleString("en-US");
+            },
+          },
+          BURST_START,
+        );
+        tl.fromTo(
+          counterEl,
+          { scale: 0.42 },
+          { scale: 1, duration: BURST_DUR, ease: COUNT_EASE },
+          BURST_START,
+        );
+        tl.fromTo(
+          "#s05-counterwrap",
+          { opacity: 0 },
+          { opacity: 1, duration: 0.3, ease: "power2.out" },
+          BURST_START,
+        );
+        tl.fromTo(
+          "#s05-kicker",
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+          1.55,
+        );
+
+        /* ── Scene 1: timestamp token-swap pulse ── */
+        const TS_FLIP = 0.55;
+        tl.fromTo(
+          "#s05-ts",
+          { scale: 1 },
+          { scale: 1.07, duration: 0.12, ease: "power2.out" },
+          TS_FLIP,
+        );
+        tl.to("#s05-ts", { scale: 1, duration: 0.22, ease: "power2.inOut" }, TS_FLIP + 0.14);
+
+        /* ── Scene 4: glow bloom + ZERO HOLD TIME stamp ── */
+        tl.fromTo(
+          "#s05-glow",
+          { opacity: 0, scale: 0.85 },
+          { opacity: 0.3, scale: 1, duration: 0.95, ease: "power2.out" },
+          5.15,
+        );
+        tl.fromTo(
+          "#s05-zht",
+          { opacity: 0, scale: 1.16 },
+          { opacity: 1, scale: 1, duration: 0.38, ease: "power3.out" },
+          5.2,
+        );
+
+        /* ── blueprint close: slow lean-in across the back half ── */
+        tl.fromTo(
+          "#s05-stage",
+          { scale: 1 },
+          { scale: 1.045, duration: D - 3.7, ease: "power1.inOut" },
+          3.7,
+        );
+
+        /* ── master driver: ticks burst · timestamp swap · per-word line · keyword glow ── */
+        const minEl = document.getElementById("s05-min");
+        let lastMin = "14";
+
+        const WORDS = Array.from(document.querySelectorAll("#s05-line .s05-w"));
+        /* pre-computed word timeline (dynamic-content-sequencing) — starts on VO cues */
+        const WORD_TL = [3.78, 4.02, 4.24, 4.62, 4.78];
+        const WORD_RAMP = 0.28;
+
+        /* asr-keyword-glow (karaoke style) */
+        const KWS = Array.from(document.querySelectorAll("#s05-zht .s05-kw"));
+        const KW_TIMINGS = {
+          zero: { start: 5.45, end: 5.78 },
+          hold: { start: 5.84, end: 6.1 },
+          time: { start: 6.16, end: 6.656 },
+        };
+        const ATTACK = 0.15;
+        const RELEASE = 0.3;
+        const REST = 0.35;
+        const MAX_BLUR = 30;
+        const MAX_SCALE = 0.16;
+        const REST_RGB = { r: 80, g: 78, b: 72 };
+        const ACTIVE_RGB = { r: 255, g: 179, b: 0 };
+
+        function clamp01(v) {
+          return v < 0 ? 0 : v > 1 ? 1 : v;
+        }
+        function envelope(t, start, end) {
+          if (t < start) return 0;
+          if (t < end) return Math.min((t - start) / ATTACK, 1);
+          const releaseEnd = end + RELEASE;
+          if (t < releaseEnd) return 1 - ((t - end) / RELEASE) * (1 - REST);
+          return REST;
+        }
+        function ch(a, b, e) {
+          return Math.round(a + (b - a) * e);
+        }
+
+        const drv = { t: 0 };
+        tl.to(
+          drv,
+          {
+            t: D,
+            duration: D,
+            ease: "none",
+            onUpdate: () => {
+              const t = drv.t;
+
+              /* timestamp — discrete token swap, instant, guarded */
+              const min = t >= TS_FLIP ? "16" : "14";
+              if (min !== lastMin) {
+                minEl.textContent = min;
+                lastMin = min;
+              }
+
+              /* tick burst — center-outward-expansion synced to the counter's ease */
+              const p = easeFn(clamp01((t - BURST_START) / BURST_DUR));
+              for (let i = 0; i < N; i++) {
+                const k = TICKS[i];
+                let op, s;
+                if (i === 0) {
+                  /* the one call — visible from the cold open, joins the burst */
+                  op = clamp01((t - 0.15) / 0.35);
+                  s = 1.25 - 0.25 * p;
+                } else {
+                  op = (0.28 + 0.62 * k.d) * clamp01(p / 0.35);
+                  s = 0.5 + (0.5 + 0.55 * k.d - 0.5) * p;
+                }
+                k.el.style.opacity = op.toFixed(3);
+                k.el.style.transform =
+                  "translate(-50%,-50%) translate(" +
+                  (k.tx * p).toFixed(1) +
+                  "px," +
+                  (k.ty * p).toFixed(1) +
+                  "px) scale(" +
+                  s.toFixed(3) +
+                  ")";
+              }
+
+              /* Scene 3 — per-word landing on VO cues */
+              for (let w = 0; w < WORDS.length; w++) {
+                const e = clamp01((t - WORD_TL[w]) / WORD_RAMP);
+                WORDS[w].style.opacity = e.toFixed(3);
+                WORDS[w].style.transform = "translateY(" + ((1 - e) * 26).toFixed(1) + "px)";
+              }
+
+              /* Scene 4 — keyword glow envelope */
+              for (let w = 0; w < KWS.length; w++) {
+                const timing = KW_TIMINGS[KWS[w].dataset.word];
+                if (!timing) continue;
+                const e = envelope(t, timing.start, timing.end);
+                KWS[w].style.color =
+                  "rgb(" +
+                  ch(REST_RGB.r, ACTIVE_RGB.r, e) +
+                  "," +
+                  ch(REST_RGB.g, ACTIVE_RGB.g, e) +
+                  "," +
+                  ch(REST_RGB.b, ACTIVE_RGB.b, e) +
+                  ")";
+                KWS[w].style.textShadow =
+                  "0 0 " + (MAX_BLUR * e).toFixed(1) + "px rgba(255,160,0," + (0.85 * e).toFixed(3) + ")";
+                KWS[w].style.transform = "scale(" + (1 + MAX_SCALE * e).toFixed(3) + ")";
+              }
+            },
+          },
+          0,
+        );
+      })();
+    </script>
+  </div>
+</template>

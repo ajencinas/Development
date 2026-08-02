@@ -165,7 +165,7 @@ keyMessage: One agent covers the whole front line, around the clock.
 - voiceover: "Every call answered in seconds. Twenty-four seven. At any scale. GridVoice — the voice A-I agent for utilities."
 - duration: 7.36s
 - transition_in: zoom-through
-- status: outline
+- status: animated
 - src: compositions/frames/07-cta.html
 - type: cta
 - persuasion: Value stacking on the rule of three, sealed by the brand lockup

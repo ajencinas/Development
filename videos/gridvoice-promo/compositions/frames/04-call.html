@@ -1,0 +1,705 @@
+<template>
+  <style>
+    /* ── 04-call · "The call, handled" · Broadside dark register ─────────── */
+    #root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Barlow", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color: #f4f6fb;
+    }
+
+    /* full-bleed ground lives on a clip, never on #root */
+    .c04-bg {
+      position: absolute;
+      inset: 0;
+      background: #0b1120;
+    }
+
+    .c04-stage-clip {
+      position: absolute;
+      inset: 0;
+      overflow: hidden; /* required — zoomed content must not leak the frame */
+    }
+
+    /* coordinate-target-zoom: outer scales, inner counter-translates */
+    .c04-zoom-outer {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    .c04-zoom-inner {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+    }
+    .c04-jitter {
+      position: absolute;
+      inset: 0;
+    }
+
+    .c04-mono {
+      font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 500;
+    }
+
+    /* ── chrome (static HUD, outside the camera) ── */
+    .c04-chrome {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .c04-chrome-inner {
+      position: absolute;
+      inset: 0;
+    }
+    .c04-chrome-bar {
+      position: absolute;
+      left: 106px;
+      right: 106px;
+      top: 100px;
+      height: 1px;
+      background: #282726;
+    }
+    .c04-chrome-label {
+      position: absolute;
+      top: 64px;
+      font-size: 14px;
+      color: #504e48;
+    }
+    .c04-chrome-label.left {
+      left: 106px;
+    }
+    .c04-chrome-label.right {
+      right: 106px;
+    }
+
+    /* ── incoming-call chip (the trigger) ── */
+    .c04-chip {
+      position: absolute;
+      left: 106px;
+      top: 138px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      height: 58px;
+      padding: 0 26px;
+      background: #1a1918;
+      border: 1px solid #282726;
+      font-size: 16px;
+      color: #f4f6fb;
+      will-change: transform;
+    }
+    .c04-chip-dot {
+      width: 10px;
+      height: 10px;
+      background: #ffb300;
+    }
+    .c04-chip em {
+      font-style: normal;
+      color: #ffb300;
+    }
+
+    /* ── the call-panel stage · asymmetric 60/40 ── */
+    .c04-panel {
+      position: absolute;
+      left: 106px;
+      top: 240px;
+      width: 1708px;
+      height: 608px;
+      border-top: 1px solid #282726;
+      display: flex;
+      will-change: transform;
+    }
+
+    /* left task rail */
+    .c04-rail {
+      width: 56%;
+      padding: 34px 56px 0 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .c04-kicker {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .c04-kicker .stub {
+      width: 36px;
+      height: 2px;
+      background: #ffb300;
+    }
+    .c04-kicker .txt {
+      font-size: 14px;
+      color: #ffb300;
+    }
+
+    .c04-row {
+      position: relative;
+      border-top: 1px solid #282726;
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      height: 96px;
+      will-change: transform;
+    }
+    .c04-row.tall {
+      height: 104px;
+    }
+    /* stat-bars-and-fills · fill register: the row's top hairline charges orange */
+    .c04-fill {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%; /* required — a zero-width fill scaled by anything is invisible */
+      height: 2px;
+      background: #ffb300;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .c04-badge {
+      width: 44px;
+      height: 44px;
+      border: 1px solid #282726;
+      perspective: 320px;
+      flex: none;
+    }
+    .c04-badge-in {
+      width: 100%;
+      height: 100%;
+      background: #ffb300;
+      display: grid;
+      place-items: center;
+      will-change: transform;
+    }
+    .c04-badge-in svg {
+      width: 24px;
+      height: 24px;
+    }
+    .c04-row-txt {
+      font-size: 38px;
+      font-weight: 600;
+      text-transform: lowercase;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .c04-eta {
+      display: inline-block;
+      transform-origin: 50% 50%;
+      font-weight: 800;
+      font-size: 44px;
+      margin-left: 10px;
+      text-shadow: 0 0 0 rgba(255, 179, 0, 0);
+      will-change: transform;
+    }
+    .c04-tag {
+      margin-left: auto;
+      font-size: 13px;
+      color: #504e48;
+      flex: none;
+    }
+
+    /* receipt row — the display-scale close */
+    .c04-receipt {
+      position: relative;
+      border-top: 1px solid #282726;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      flex: 1;
+      min-height: 150px;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    .c04-receipt .c04-badge {
+      width: 56px;
+      height: 56px;
+    }
+    .c04-receipt .c04-badge-in svg {
+      width: 30px;
+      height: 30px;
+    }
+    .c04-receipt-word {
+      font-size: 54px;
+      font-weight: 700;
+      text-transform: lowercase;
+      letter-spacing: -0.02em;
+    }
+    .c04-receipt-right {
+      margin-left: auto;
+      display: flex;
+      align-items: baseline;
+      gap: 26px;
+    }
+    .c04-receipt-right .lbl {
+      font-size: 14px;
+      color: #504e48;
+    }
+    .c04-stat {
+      font-size: 104px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: #ffb300;
+    }
+
+    /* right grid-map region */
+    .c04-mapwrap {
+      flex: 1;
+      border-left: 1px solid #282726;
+      position: relative;
+      overflow: hidden;
+    }
+    .c04-mapgrid {
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to right,
+          rgba(244, 246, 251, 0.06) 0 1px,
+          transparent 1px 64px
+        ),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(244, 246, 251, 0.06) 0 1px,
+          transparent 1px 64px
+        );
+    }
+    .c04-maplabel {
+      position: absolute;
+      top: 26px;
+      left: 30px;
+      font-size: 13px;
+      color: #504e48;
+    }
+    .c04-node {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      background: #504e48;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    /* ambient-glow-bloom: glow layer behind (z1), ring (z2), hero node (z3) */
+    .c04-glow {
+      position: absolute;
+      left: calc(60% - 170px);
+      top: calc(42% - 170px);
+      width: 340px;
+      height: 340px;
+      z-index: 1;
+      background: radial-gradient(
+        circle,
+        rgba(255, 150, 0, 0.55) 0%,
+        rgba(255, 150, 0, 0.18) 36%,
+        rgba(255, 150, 0, 0) 66%
+      );
+      opacity: 0;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+    .c04-ring {
+      position: absolute;
+      left: calc(60% - 13px);
+      top: calc(42% - 13px);
+      width: 26px;
+      height: 26px;
+      border: 1px solid #ffb300;
+      z-index: 2;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+    .c04-outage {
+      position: absolute;
+      left: calc(60% - 6px);
+      top: calc(42% - 6px);
+      width: 12px;
+      height: 12px;
+      background: #ffb300;
+      z-index: 3;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    .c04-nodetag {
+      position: absolute;
+      left: calc(60% + 22px);
+      top: calc(42% - 8px);
+      z-index: 4;
+      font-size: 12px;
+      color: #f4f6fb;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-call">
+    <!-- ground -->
+    <div
+      class="clip c04-bg"
+      id="c04-call-bg"
+      data-start="0"
+      data-duration="8"
+      data-track-index="0"
+    ></div>
+
+    <!-- the working theater (camera-driven) -->
+    <div
+      class="clip c04-stage-clip"
+      id="c04-call-stage"
+      data-start="0"
+      data-duration="8"
+      data-track-index="1"
+    >
+      <div class="c04-zoom-outer" id="c04-call-zoom-outer">
+        <div class="c04-zoom-inner" id="c04-call-zoom-inner">
+          <div class="c04-jitter" id="c04-call-jitter">
+            <!-- trigger: incoming-call chip -->
+            <div class="c04-chip c04-mono" id="c04-call-chip">
+              <span class="c04-chip-dot"></span>
+              <span>Incoming · <em>2:14 am</em> · Maple St</span>
+            </div>
+
+            <!-- stage panel · 60/40 -->
+            <div class="c04-panel" id="c04-call-panel">
+              <div class="c04-rail">
+                <div class="c04-kicker" id="c04-call-kicker">
+                  <span class="stub"></span>
+                  <span class="txt c04-mono">Live status</span>
+                </div>
+
+                <div class="c04-row" id="c04-call-row1">
+                  <div class="c04-fill"></div>
+                  <div class="c04-badge">
+                    <div class="c04-badge-in">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M5 12.5l4.5 4.5L19 7.5"
+                          stroke="#0B1120"
+                          stroke-width="3"
+                          fill="none"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="c04-row-txt">outage confirmed</div>
+                  <div class="c04-tag c04-mono">Grid map</div>
+                </div>
+
+                <div class="c04-row" id="c04-call-row2">
+                  <div class="c04-fill"></div>
+                  <div class="c04-badge">
+                    <div class="c04-badge-in">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M5 12.5l4.5 4.5L19 7.5"
+                          stroke="#0B1120"
+                          stroke-width="3"
+                          fill="none"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="c04-row-txt">report filed</div>
+                  <div class="c04-tag c04-mono">Auto</div>
+                </div>
+
+                <div class="c04-row tall" id="c04-call-row3">
+                  <div class="c04-fill"></div>
+                  <div class="c04-badge">
+                    <div class="c04-badge-in">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M5 12.5l4.5 4.5L19 7.5"
+                          stroke="#0B1120"
+                          stroke-width="3"
+                          fill="none"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="c04-row-txt">
+                    restoration<span class="c04-eta" id="c04-call-eta">3:45 am</span>
+                  </div>
+                  <div class="c04-tag c04-mono">ETA</div>
+                </div>
+
+                <div class="c04-receipt" id="c04-call-receipt">
+                  <div class="c04-fill"></div>
+                  <div class="c04-badge">
+                    <div class="c04-badge-in">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M5 12.5l4.5 4.5L19 7.5"
+                          stroke="#0B1120"
+                          stroke-width="3"
+                          fill="none"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="c04-receipt-word">resolved</div>
+                  <div class="c04-receipt-right">
+                    <span class="lbl c04-mono">Elapsed</span>
+                    <span class="c04-stat">0:52</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="c04-mapwrap">
+                <div class="c04-mapgrid"></div>
+                <div class="c04-maplabel c04-mono">Live grid map</div>
+                <div class="c04-node" style="left: 18%; top: 26%"></div>
+                <div class="c04-node" style="left: 34%; top: 62%"></div>
+                <div class="c04-node" style="left: 48%; top: 18%"></div>
+                <div class="c04-node" style="left: 72%; top: 70%"></div>
+                <div class="c04-node" style="left: 84%; top: 30%"></div>
+                <div class="c04-node" style="left: 26%; top: 80%"></div>
+                <div class="c04-glow" id="c04-call-glow"></div>
+                <div class="c04-ring" id="c04-call-ring"></div>
+                <div class="c04-outage" id="c04-call-outage"></div>
+                <div class="c04-nodetag c04-mono" id="c04-call-nodetag">Maple St</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- static chrome HUD (outside the camera) -->
+    <div
+      class="clip c04-chrome"
+      id="c04-call-chrome"
+      data-start="0"
+      data-duration="8"
+      data-track-index="2"
+    >
+      <div class="c04-chrome-inner" id="c04-call-chrome-inner">
+        <div class="c04-chrome-label left c04-mono">Automated call log</div>
+        <div class="c04-chrome-label right c04-mono">No. 04</div>
+        <div class="c04-chrome-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["04-call"] = tl;
+
+      /* ── Scene 1 (0.0–1.5s) · trigger + stage ─────────────────────────── */
+      /* spring-pop-entrance (smooth register, power3.out — no overshoot) */
+      tl.fromTo(
+        "#c04-call-chip",
+        { y: -110, opacity: 0, scale: 0.9 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.65, ease: "power3.out" },
+        0.08
+      );
+      tl.fromTo(
+        "#c04-call-panel",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+        0.22
+      );
+      tl.fromTo(
+        "#c04-call-chrome-inner",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: "power2.out" },
+        0.38
+      );
+      tl.fromTo(
+        "#c04-call-kicker",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+        0.55
+      );
+      gsap.utils.toArray(".c04-node").forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { opacity: 0, scale: 0.4 },
+          { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" },
+          0.85 + i * 0.06
+        );
+      });
+
+      /* ── rows · dynamic-content-sequencing (staggered land → fill → check) */
+      function landRow(rowSel, tLand, tFillStart, fillDur, tCheck) {
+        tl.fromTo(
+          rowSel,
+          { opacity: 0, y: 26 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+          tLand
+        );
+        /* stat-bars-and-fills fill register — scaleX, left origin, never width */
+        tl.fromTo(
+          rowSel + " .c04-fill",
+          { scaleX: 0 },
+          { scaleX: 1, duration: fillDur, ease: "power2.out" },
+          tFillStart
+        );
+        /* amber badge flip */
+        tl.fromTo(
+          rowSel + " .c04-badge-in",
+          { rotationX: -90, opacity: 0 },
+          { rotationX: 0, opacity: 1, duration: 0.35, ease: "power3.out" },
+          tCheck
+        );
+      }
+
+      /* ── Scene 2 (1.5–4.0s) · confirm + file ──────────────────────────── */
+      landRow("#c04-call-row1", 1.6, 1.75, 0.45, 2.2);
+      landRow("#c04-call-row2", 2.9, 3.05, 0.45, 3.5);
+
+      /* ambient-glow-bloom · ping on the grid map — glow + node land as one beat */
+      tl.fromTo(
+        "#c04-call-glow",
+        { opacity: 0, scale: 0.8 },
+        { opacity: 0.3, scale: 1, duration: 0.6, ease: "power2.out" },
+        1.95
+      );
+      tl.fromTo(
+        "#c04-call-outage",
+        { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" },
+        2.1
+      );
+      tl.fromTo(
+        "#c04-call-ring",
+        { scale: 0.25, opacity: 0.7 },
+        { scale: 4.5, opacity: 0, duration: 0.9, ease: "power2.out" },
+        2.1
+      );
+      tl.fromTo(
+        "#c04-call-nodetag",
+        { opacity: 0, y: 6 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        2.35
+      );
+      /* bounded breathe — finite phase tween, never a yoyo loop; sin(0)=0 */
+      var glowEl = document.getElementById("c04-call-glow");
+      var glowPhase = { p: 0 };
+      tl.to(
+        glowPhase,
+        {
+          p: Math.PI * 2 * 1.5,
+          duration: 4.8,
+          ease: "none",
+          onUpdate: function () {
+            var s = Math.sin(glowPhase.p);
+            glowEl.style.opacity = String(0.3 + s * 0.035);
+            glowEl.style.transform = "scale(" + (1 + s * 0.02) + ")";
+          },
+        },
+        2.55
+      );
+
+      /* ── Scene 3 (4.0–6.1s) · restoration time + camera ───────────────── */
+      landRow("#c04-call-row3", 4.15, 4.3, 0.5, 4.85);
+
+      /* asr-keyword-glow — one linear driver, envelope on the "3:45 am" token */
+      var ATTACK = 0.18,
+        RELEASE = 0.45,
+        REST = 0.35;
+      var T_START = 4.55,
+        T_END = 5.5;
+      function envelope(t) {
+        if (t < T_START) return 0;
+        if (t < T_END) return Math.min((t - T_START) / ATTACK, 1);
+        var relEnd = T_END + RELEASE;
+        if (t < relEnd) return 1 - ((t - T_END) / RELEASE) * (1 - REST);
+        return REST;
+      }
+      function lerpCh(a, b, t) {
+        return Math.round(a + (b - a) * t);
+      }
+      var etaEl = document.getElementById("c04-call-eta");
+      var driver = { t: 0 };
+      tl.to(
+        driver,
+        {
+          t: 8,
+          duration: 8,
+          ease: "none",
+          onUpdate: function () {
+            var env = envelope(driver.t);
+            etaEl.style.textShadow =
+              "0 0 " + 28 * env + "px rgba(255,179,0," + (0.85 * env).toFixed(3) + ")";
+            etaEl.style.transform = "scale(" + (1 + 0.12 * env) + ")";
+            etaEl.style.color =
+              "rgb(" +
+              lerpCh(244, 255, env) +
+              "," +
+              lerpCh(246, 179, env) +
+              "," +
+              lerpCh(251, 0, env) +
+              ")";
+          },
+        },
+        0
+      );
+
+      /* coordinate-target-zoom — outer scales, inner counter-translates (T = -offset).
+         Target measured from the laid-out DOM (box geometry, not glyph metrics). */
+      var W = 1920,
+        H = 1080;
+      var r = document.getElementById("c04-call-receipt").getBoundingClientRect();
+      var OFF_X = r.left + r.width / 2 - W / 2;
+      var OFF_Y = r.top + r.height / 2 - H / 2;
+      var maxScale = Math.min((0.88 * W) / r.width, (0.88 * H) / r.height);
+      var ZS = Math.min(1.28, maxScale);
+      tl.to(
+        "#c04-call-zoom-outer",
+        { scale: ZS, duration: 1.15, ease: "power3.inOut" },
+        5.0
+      );
+      tl.to(
+        "#c04-call-zoom-inner",
+        { x: -OFF_X, y: -OFF_Y, duration: 1.15, ease: "power3.inOut" },
+        5.0
+      );
+
+      /* ── Scene 4 (6.1–8.0s) · receipt stamp, settle + subtle jitter ───── */
+      tl.fromTo(
+        "#c04-call-receipt",
+        { opacity: 0, scale: 1.5 },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
+        6.25
+      );
+      tl.fromTo(
+        "#c04-call-receipt .c04-fill",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.4, ease: "power2.out" },
+        6.45
+      );
+      tl.fromTo(
+        "#c04-call-receipt .c04-badge-in",
+        { rotationX: -90, opacity: 0 },
+        { rotationX: 0, opacity: 1, duration: 0.35, ease: "power3.out" },
+        6.85
+      );
+
+      /* held close — bounded micro-jitter, whole sine cycles so it ends at rest */
+      var jitEl = document.getElementById("c04-call-jitter");
+      var jit = { p: 0 };
+      tl.to(
+        jit,
+        {
+          p: Math.PI * 2 * 2,
+          duration: 1.05,
+          ease: "none",
+          onUpdate: function () {
+            jitEl.style.transform =
+              "translateY(" + (Math.sin(jit.p) * 1.3).toFixed(2) + "px)";
+          },
+        },
+        6.9
+      );
+    })();
+  </script>
+</template>
