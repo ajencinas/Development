@@ -1,0 +1,13 @@
+{
+  "provider": "kokoro",
+  "lang": "en",
+  "lines": [],
+  "bgm": {
+    "mode": "generate",
+    "query": "calm confident minimal electronic underscore, dark storm atmosphere resolving into warm assured close",
+    "prompt": "calm confident minimal electronic underscore, deep soft bass, restrained percussion, dark atmospheric pads opening in a minor key and resolving warm and assured, 92 bpm, cinematic, no melody-forward lead, background bed for narration",
+    "blob": "utility voice AI promo, storm night resolving to calm morning",
+    "archetype": "PAS",
+    "arc": "tension to relief to trust"
+  }
+}

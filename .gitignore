@@ -1,0 +1,4 @@
+node_modules/
+videos/*/node_modules/
+videos/*/renders/*.webm
+videos/*/.hyperframes/browser-cache/

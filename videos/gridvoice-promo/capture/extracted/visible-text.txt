@@ -1,0 +1,40 @@
+GridVoice — The Voice AI Agent for Utilities
+
+Concept brief (no website; text-only source material):
+
+GridVoice is a voice AI agent purpose-built for utilities — electric, gas,
+and water providers. It answers every customer call in seconds, around the
+clock, at any scale.
+
+What it does:
+- Outage reporting: customers call at any hour; GridVoice confirms the
+  outage against the live grid map, files the report, and gives a real
+  restoration estimate. It texts updates as crews make progress.
+- Storm-scale capacity: when a storm knocks out power to a whole region,
+  call volume spikes 100x. GridVoice answers thousands of simultaneous
+  calls with zero hold time.
+- Billing questions: "Why is my bill higher this month?" — GridVoice reads
+  the account, explains usage, and sets up payment plans on the call.
+- Service scheduling: start, stop, or transfer service; book technician
+  visits; confirm appointment windows.
+- Seamless handoff: anything it can't resolve is handed to a human agent
+  with full context — no repeating yourself.
+
+Why utilities:
+- Utilities are judged on the worst night of the year. When the power is
+  out at 2 AM, "estimated hold time: 47 minutes" is not an answer.
+- GridVoice is trained on utility operations — outage codes, tariffs,
+  meter data, service territories — not generic support scripts.
+
+The story of the video ("The 2:14 AM Call"):
+2:14 AM — a storm takes out power on Maple Street. A customer calls.
+2:14 AM — GridVoice answers on the first ring. Calm. It confirms the
+outage, files the report, gives a 3:45 AM restoration estimate.
+2:16 AM — the same storm: 4,800 more customers are calling. Every one of
+them gets answered in seconds.
+3:41 AM — power restored, four minutes early. GridVoice texts everyone
+who called.
+8:02 AM — a different caller, a billing question. Same agent, same calm.
+
+Closing message: Every call answered in seconds — 24/7, at any scale.
+GridVoice. The voice AI agent for utilities.
